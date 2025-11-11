@@ -118,7 +118,7 @@
                                 <a class="dropdown-item" href="profile.html"><i class="ti ti-user-circle me-2"></i>Profile</a>
                                 <a class="dropdown-item" href="profile.html"><i class="ti ti-user-circle me-2"></i>Change Password</a>
                                 <hr class="my-2">
-                                <a class="dropdown-item logout pb-0" href="/admin/logout"><i class="ti ti-logout me-2"></i>Logout</a>
+                                <a class="dropdown-item logout pb-0" href="{{ route('admin.logout') }}"><i class="ti ti-logout me-2"></i>Logout</a>
                             </div>
                         </li>
                     </ul>
@@ -148,61 +148,6 @@
                         <i data-feather="chevrons-left" class="feather-16"></i>
                     </a>
                 </div>
-                <div class="modern-profile p-3 pb-0">
-                    <div class="text-center rounded bg-light p-3 mb-4 user-profile">
-                        <div class="avatar avatar-lg online mb-3">
-                            <img src="{{ asset('assets/img/profiles/customer15.jpg') }}" alt="Img" class="img-fluid rounded-circle">
-                        </div>
-                        <h6 class="fs-14 fw-bold mb-1">Adrian Herman</h6>
-                        <p class="fs-12 mb-0">System Admin</p>
-                    </div>
-                    <div class="sidebar-nav mb-3">
-                        <ul class="nav nav-tabs nav-tabs-solid nav-tabs-rounded nav-justified bg-transparent" role="tablist">
-                            <li class="nav-item"><a class="nav-link active border-0" href="#">Menu</a></li>
-                            <li class="nav-item"><a class="nav-link border-0" href="chat.html">Chats</a></li>
-                            <li class="nav-item"><a class="nav-link border-0" href="email.html">Inbox</a></li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="sidebar-header p-3 pb-0 pt-2">
-                    <div class="text-center rounded bg-light p-2 mb-4 sidebar-profile d-flex align-items-center">
-                        <div class="avatar avatar-md onlin">
-                            <img src="{{ asset('assets/img/profiles/customer15.jpg') }}" alt="Img" class="img-fluid rounded-circle">
-                        </div>
-                        <div class="text-start sidebar-profile-info ms-2">
-                            <h6 class="fs-14 fw-bold mb-1">Adrian Herman</h6>
-                            <p class="fs-12">System Admin</p>
-                        </div>
-                    </div>
-                    <div class="d-flex align-items-center justify-content-between menu-item mb-3">
-                        <div>
-                            <a href="index.html" class="btn btn-sm btn-icon bg-light">
-                                <i class="ti ti-layout-grid-remove"></i>
-                            </a>
-                        </div>
-                        <div>
-                            <a href="chat.html" class="btn btn-sm btn-icon bg-light">
-                                <i class="ti ti-brand-hipchat"></i>
-                            </a>
-                        </div>
-                        <div>
-                            <a href="email.html" class="btn btn-sm btn-icon bg-light position-relative">
-                                <i class="ti ti-message"></i>
-                            </a>
-                        </div>
-                        <div class="notification-item">
-                            <a href="activities.html" class="btn btn-sm btn-icon bg-light position-relative">
-                                <i class="ti ti-bell"></i>
-                                <span class="notification-status-dot"></span>
-                            </a>
-                        </div>
-                        <div class="me-0">
-                            <a href="general-settings.html" class="btn btn-sm btn-icon bg-light">
-                                <i class="ti ti-settings"></i>
-                            </a>
-                        </div>
-                    </div>
-                </div>
                 <div class="sidebar-inner slimscroll">
                     <div id="sidebar-menu" class="sidebar-menu">
                         <ul>
@@ -212,35 +157,57 @@
                                     <li><a href="{{ route('admin.dashboard') }}"><i data-feather="box"></i><span>Dashboard</span></a></li>
                                 </ul>
                             </li>
+                            @if(Auth::user()->role == 1)
+                                <li class="submenu-open">
+                                    <h6 class="submenu-hdr">Admin</h6>
+                                    <ul id="main_menu_list">
+                                        <li class="permission" data-module="admin" data-title="Admin">
+                                            <a href="{{ url('admin/admins') }}"><i data-feather="box"></i><span>Admin List</span></a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li class="submenu-open">
+                                    <h6 class="submenu-hdr">Fish</h6>
+                                    <ul id="main_menu_list">
+                                        <li class="permission" data-module="fish" data-title="Fish">
+                                            <a href="{{ url('admin/fishes') }}"><i data-feather="box"></i><span>Fish List</span></a>
+                                        </li>
+                                    </ul>
+                                </li>
+                            @endif
                             <li class="submenu-open">
-                                <h6 class="submenu-hdr">Admin</h6>
-                                <ul id="main_menu_list">
-                                    <li class="permission" data-module="admin" data-title="Admin">
-                                        <a href="{{ url('admin/admins') }}"><i data-feather="box"></i><span>Admin List</span></a>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li class="submenu-open">
-                                <h6 class="submenu-hdr">Fish</h6>
-                                <ul id="main_menu_list">
-                                    <li class="permission" data-module="fish" data-title="Fish">
-                                        <a href="{{ url('admin/fishes') }}"><i data-feather="box"></i><span>Fish List</span></a>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li class="submenu-open">
-                                <h6 class="submenu-hdr">Vendor</h6>
+                                <h6 class="submenu-hdr">User Management</h6>
                                 <ul id="main_menu_list">
                                     <li class="permission" data-module="vendor" data-title="Vendor">
                                         <a href="{{ url('admin/vendors') }}"><i data-feather="box"></i><span>Vendor List</span></a>
                                     </li>
+                                    <li class="permission" data-module="customer" data-title="Customer">
+                                        <a href="{{ url('admin/customers') }}"><i data-feather="box"></i><span>Customer List</span></a>
+                                    </li>
                                 </ul>
                             </li>
                             <li class="submenu-open">
-                                <h6 class="submenu-hdr">Customer</h6>
+                                <h6 class="submenu-hdr">Entry Management</h6>
                                 <ul id="main_menu_list">
-                                    <li class="permission" data-module="customer" data-title="Customer">
-                                        <a href="{{ url('admin/customers') }}"><i data-feather="box"></i><span>Customer List</span></a>
+                                    <li class="permission" data-module="vendor" data-title="Vendor">
+                                        <a href="{{ url('admin/vendors') }}"><i data-feather="box"></i><span>Sale Entry</span></a>
+                                    </li>
+                                    <li class="permission" data-module="vendor" data-title="Vendor">
+                                        <a href="{{ url('admin/purchase_entries') }}"><i data-feather="box"></i><span>Purchase Entry</span></a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="submenu-open">
+                                <h6 class="submenu-hdr">Report Management</h6>
+                                <ul id="main_menu_list">
+                                    <li class="permission" data-module="vendor" data-title="Vendor">
+                                        <a href="{{ url('admin/vendors') }}"><i data-feather="box"></i><span>Daily Report</span></a>
+                                    </li>
+                                    <li class="permission" data-module="vendor" data-title="Vendor">
+                                        <a href="{{ url('admin/vendors') }}"><i data-feather="box"></i><span>Vendor Report</span></a>
+                                    </li>
+                                    <li class="permission" data-module="vendor" data-title="Vendor">
+                                        <a href="{{ url('admin/vendors') }}"><i data-feather="box"></i><span>Customer Report</span></a>
                                     </li>
                                 </ul>
                             </li>

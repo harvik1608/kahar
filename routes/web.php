@@ -4,6 +4,9 @@
     use App\Http\Controllers\DashboardController;
     use App\Http\Controllers\FishController;
     use App\Http\Controllers\AdminController;
+    use App\Http\Controllers\VendorController;
+    use App\Http\Controllers\CustomerController;
+    use App\Http\Controllers\PurchaseController;
 
     // Route::get('/', [HomeController::class, 'index'])->name('home');
     // Route::get('/services', [HomeController::class, 'services'])->name('services');
@@ -26,11 +29,17 @@
             Route::get('general-settings', [DashboardController::class, 'general_settings'])->name('admin.general-settings');
             Route::post('submit-general-settings', [DashboardController::class, 'submit_general_settings'])->name('admin.submit.general-settings');
 
-            Route::resource('admins', AdminController::class);
-            Route::get('/load-admins', [AdminController::class, 'load'])->name('admin.admin.load');
+            Route::resource('admins', AdminController::class)->middleware('checkRole');
+            Route::get('/load-admins', [AdminController::class, 'load'])->name('admin.admin.load')->middleware('checkRole');
 
-            Route::resource('fishes', FishController::class);
-            Route::get('/load-fishes', [FishController::class, 'load'])->name('admin.fish.load');
+            Route::resource('fishes', FishController::class)->middleware('checkRole');
+            Route::get('/load-fishes', [FishController::class, 'load'])->name('admin.fish.load')->middleware('checkRole');
+
+            Route::resource('vendors', VendorController::class);
+            Route::resource('customers', CustomerController::class);
+
+            Route::resource('purchase_entries', PurchaseController::class);
+            Route::get('/add-more', [PurchaseController::class, 'add_more'])->name('admin.add_more');
 
             // Route::resource('projects', ProjectController::class);
             // Route::get('/load-projects', [ProjectController::class, 'load'])->name('admin.project.load');
@@ -47,6 +56,6 @@
             // Route::get('inquiries', [DashboardController::class, 'inquiries'])->name('admin.inquiry');
             // Route::get('/load-inquiries', [DashboardController::class, 'load_inquiries'])->name('admin.inquiry.load');
 
-            Route::get('logout', [AdminController::class, 'logout'])->name('admin.logout');
+            Route::get('logout', [AuthController::class, 'logout'])->name('admin.logout');
         });
     });
