@@ -57,4 +57,9 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function purchaseEntries()
+    {
+        return $this->hasMany(Purchase_entry::class, 'vendor_id', 'id');
+    }
 }

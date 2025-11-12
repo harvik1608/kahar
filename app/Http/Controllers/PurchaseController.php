@@ -15,7 +15,8 @@ class PurchaseController extends Controller
 {
     public function index()
     {
-        return view('admin.purchase.list');
+        $entries = Purchase_entry::with('vendor:id,name,phone,avatar')->where("created_by",Auth::user()->id)->orderBy("id","desc")->get();
+        return view('admin.purchase.list',compact("entries"));
     }
 
     public function create()
@@ -58,8 +59,10 @@ class PurchaseController extends Controller
             $row->save();
             $purchase_entry_id = $row->id;
 
+            $total_kg = 0;
             $insert_batch_data = array();
             for($i = 0; $i < count($post["fish_id"]); $i ++) {
+                $total_kg = $total_kg + $post["quantity"][$i];
                 $insert_batch_data[] = array(
                     'purchase_entry_id' => $purchase_entry_id,
                     'fish_id' => $post["fish_id"][$i],
@@ -70,6 +73,7 @@ class PurchaseController extends Controller
                 );
             }
             Purchase_entry_item::insert($insert_batch_data);
+            Purchase_entry::where("id",$purchase_entry_id)->update(["fish" => $total_kg]);
 
             return response()->json(['success' => true,'message' => "Purchase entry has been added."], 200);
         } catch (\Exception $e) {
@@ -79,8 +83,15 @@ class PurchaseController extends Controller
 
     public function edit($id)
     {
-        $purchase = null;
-        return view('admin.purchase.add_edit',compact('purchase'));   
+        $purchase = Purchase_entry::find($id);
+        if(!$purchase) {
+            return redirect()->route("admin.dashboard");
+        }
+        $vendors = User::select("id","name","email","phone")->where("created_by",Auth::user()->id)->where("role",3)->orderBy("name","asc")->get();
+        $fishes = Fish::select("id","name")->orderBy("name","asc")->get();
+        $items = Purchase_entry_item::select("id","fish_id","quantity","amount","note")->where("purchase_entry_id",$id)->get();
+        $purchase["items"] = $items->toArray();
+        return view('admin.purchase.add_edit',compact('purchase','vendors','fishes'));  
     }
 
     public function update(Request $request,$id)
@@ -88,47 +99,49 @@ class PurchaseController extends Controller
         try {
             $post = $request->all();
 
-            // $check_phone = User::where("phone",$post["mobile_no"])->where("id","<>",Auth::user()->id)->count();
-            // if($check_phone > 0) {
-            //     return response()->json(['success' => false,'message' => "This mobile no. is already in use."], 200);
-            // }
-            // if(trim($post["email"]) != "") {
-            //     $check_email = User::where("email",$post["email"])->where("id","<>",Auth::user()->id)->count();
-            //     if($check_email > 0) {
-            //         return response()->json(['success' => false,'message' => "This email is already in use."], 200);
-            //     }
-            // }
-
             $avatar = $post["old_avatar"];
             if($request->hasFile('image')) {
                 $image = $request->file('image');
 
                 // generate random file name
                 $avatar = Str::random(20) . '.' . $image->getClientOriginalExtension();
-                $path = $image->move(public_path('uploads/admin'), $avatar);
+                $path = $image->move(public_path('uploads/purchase'), $avatar);
 
                 // delete old image
-                if($post["old_avatar"] != "" && file_exists(public_path('uploads/admin/'.$post["old_avatar"]))) {
-                    unlink((public_path('uploads/admin/'.$post["old_avatar"])));
+                if($post["old_avatar"] != "" && file_exists(public_path('uploads/purchase/'.$post["old_avatar"]))) {
+                    unlink((public_path('uploads/purchase/'.$post["old_avatar"])));
                 }
             }
 
-            $row = User::find($id);
-            $row->name = $post['name'];
-            $row->phone = $post['mobile_no'];
-            $row->email = $post['email'];
-            $row->country = $post['country'];
-            $row->state = $post['state'];
-            $row->city = $post['city'];
-            $row->address = $post['address'];
-            $row->is_approved = 1;
-            $row->is_active = $post['is_active'];
+            $row = Purchase_entry::find($id);
+            $row->vendor_id = $post['vendor_id'];
+            $row->date = $post['date'];
+            $row->time = $post['time'];
+            $row->note = $post['note'] == "" ? "" : $post['note'];
             $row->avatar = $avatar;
             $row->updated_by = Auth::user()->id;
             $row->updated_at = date("Y-m-d H:i:s");
             $row->save();
+            $purchase_entry_id = $id;
 
-            return response()->json(['success' => true,'message' => "Customer edited successfully."], 200);
+            Purchase_entry_item::where("purchase_entry_id",$purchase_entry_id)->delete();
+            $insert_batch_data = array();
+            $total_kg = 0;
+            for($i = 0; $i < count($post["fish_id"]); $i ++) {
+                $total_kg = $total_kg + $post["quantity"][$i];
+                $insert_batch_data[] = array(
+                    'purchase_entry_id' => $purchase_entry_id,
+                    'fish_id' => $post["fish_id"][$i],
+                    'quantity' => $post["quantity"][$i],
+                    'amount' => $post["amount"][$i],
+                    'note' => $post["fish_note"][$i] == "" ? "" : $post["fish_note"][$i],
+                    'created_at' => date("Y-m-d H:i:s")
+                );
+            }
+            Purchase_entry_item::insert($insert_batch_data);
+            Purchase_entry::where("id",$purchase_entry_id)->update(["fish" => $total_kg]);
+
+            return response()->json(['success' => true,'message' => "Purchase entry has been edited."], 200);
         } catch (\Exception $e) {
             return response()->json(['success' => false,'message' => $e->getMessage()], 200);
         }
@@ -136,11 +149,9 @@ class PurchaseController extends Controller
 
     public function destroy($id)
     {
-        $row = User::find($id);
-        $row->deleted_by = Auth::user()->id;
-        $row->save();
+        Purchase_entry::destroy($id);
+        Purchase_entry_item::where("purchase_entry_id",$id)->delete();
 
-        User::destroy($id);
-        return response()->json(['success' => true,'message' => "Customer removed successfully."], 200);
+        return response()->json(['success' => true,'message' => "Purchase entry has been removed."], 200);
     }
 }
