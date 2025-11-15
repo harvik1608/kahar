@@ -189,10 +189,10 @@
                             <li class="submenu-open">
                                 <h6 class="submenu-hdr">Entry Management</h6>
                                 <ul id="main_menu_list">
-                                    <li class="permission" data-module="vendor" data-title="Vendor">
-                                        <a href="{{ url('admin/vendors') }}"><i data-feather="box"></i><span>Sale Entry</span></a>
+                                    <li class="permission" data-module="sale_entry" data-title="Sale Entry">
+                                        <a href="{{ url('admin/sale_entries') }}"><i data-feather="box"></i><span>Sale Entry</span></a>
                                     </li>
-                                    <li class="permission" data-module="vendor" data-title="Vendor">
+                                    <li class="permission" data-module="purchase_entry" data-title="Purchase Entry">
                                         <a href="{{ url('admin/purchase_entries') }}"><i data-feather="box"></i><span>Purchase Entry</span></a>
                                     </li>
                                 </ul>
@@ -200,8 +200,8 @@
                             <li class="submenu-open">
                                 <h6 class="submenu-hdr">Report Management</h6>
                                 <ul id="main_menu_list">
-                                    <li class="permission" data-module="vendor" data-title="Vendor">
-                                        <a href="{{ url('admin/vendors') }}"><i data-feather="box"></i><span>Daily Report</span></a>
+                                    <li class="permission" data-module="daily_report" data-title="Daily Report">
+                                        <a href="{{ route('admin.daily_report') }}"><i data-feather="box"></i><span>Daily Report</span></a>
                                     </li>
                                     <li class="permission" data-module="vendor" data-title="Vendor">
                                         <a href="{{ url('admin/vendors') }}"><i data-feather="box"></i><span>Vendor Report</span></a>

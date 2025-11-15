@@ -7,6 +7,8 @@
     use App\Http\Controllers\VendorController;
     use App\Http\Controllers\CustomerController;
     use App\Http\Controllers\PurchaseController;
+    use App\Http\Controllers\SaleController;
+    use App\Http\Controllers\ReportController;
 
     // Route::get('/', [HomeController::class, 'index'])->name('home');
     // Route::get('/services', [HomeController::class, 'services'])->name('services');
@@ -26,6 +28,9 @@
         
         Route::middleware('auth')->group(function () {
             Route::get('dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
+            Route::get('daily-report', [ReportController::class, 'daily_report'])->name('admin.daily_report');
+            Route::get('load-date-wise-chart', [ReportController::class, 'load_date_wise_chart'])->name('admin.load_date_wise_chart');
+
             Route::get('general-settings', [DashboardController::class, 'general_settings'])->name('admin.general-settings');
             Route::post('submit-general-settings', [DashboardController::class, 'submit_general_settings'])->name('admin.submit.general-settings');
 
@@ -40,6 +45,10 @@
 
             Route::resource('purchase_entries', PurchaseController::class);
             Route::get('/add-more', [PurchaseController::class, 'add_more'])->name('admin.add_more');
+
+            Route::resource('sale_entries', SaleController::class);
+            Route::get('/fetch-vendor-fish', [SaleController::class, 'fetch_vendor_fish'])->name('admin.fetch_vendor_fish');
+            Route::get('/add-more-sale', [SaleController::class, 'add_more_sale'])->name('admin.add_more_sale');
 
             // Route::resource('projects', ProjectController::class);
             // Route::get('/load-projects', [ProjectController::class, 'load'])->name('admin.project.load');

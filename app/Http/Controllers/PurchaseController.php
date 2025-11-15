@@ -65,6 +65,7 @@ class PurchaseController extends Controller
                 $total_kg = $total_kg + $post["quantity"][$i];
                 $insert_batch_data[] = array(
                     'purchase_entry_id' => $purchase_entry_id,
+                    'vendor_id' => $post['vendor_id'],
                     'fish_id' => $post["fish_id"][$i],
                     'quantity' => $post["quantity"][$i],
                     'amount' => $post["amount"][$i],
@@ -131,6 +132,7 @@ class PurchaseController extends Controller
                 $total_kg = $total_kg + $post["quantity"][$i];
                 $insert_batch_data[] = array(
                     'purchase_entry_id' => $purchase_entry_id,
+                    'vendor_id' => $post['vendor_id'],
                     'fish_id' => $post["fish_id"][$i],
                     'quantity' => $post["quantity"][$i],
                     'amount' => $post["amount"][$i],
